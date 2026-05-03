@@ -19,6 +19,9 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/id.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 </head>
 <body>
     <script>
@@ -27,6 +30,50 @@
             document.body.classList.add('dark-theme');
         }
     </script>
+
+    <!-- ===== AUTH LOGIN OVERLAY ===== -->
+    <div id="authOverlay" style="display:flex; position:fixed; inset:0; z-index:99999; align-items:center; justify-content:center; background:linear-gradient(135deg, #0f0c29 0%, #1e1b4b 40%, #302b63 70%, #24243e 100%); transition: opacity 0.4s ease, transform 0.4s ease;">
+        <!-- Animated background particles -->
+        <div style="position:absolute; inset:0; overflow:hidden; pointer-events:none;">
+            <div style="position:absolute; width:300px; height:300px; border-radius:50%; background:radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%); top:10%; left:5%; animation:authFloat 8s ease-in-out infinite;"></div>
+            <div style="position:absolute; width:400px; height:400px; border-radius:50%; background:radial-gradient(circle, rgba(168,85,247,0.1) 0%, transparent 70%); bottom:10%; right:5%; animation:authFloat 10s ease-in-out infinite reverse;"></div>
+            <div style="position:absolute; width:200px; height:200px; border-radius:50%; background:radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%); top:50%; left:50%; transform:translate(-50%,-50%); animation:authFloat 6s ease-in-out infinite;"></div>
+        </div>
+        <style>
+            @keyframes authFloat { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-30px) scale(1.05)} }
+            @keyframes authPulse { 0%,100%{box-shadow:0 0 0 0 rgba(99,102,241,0.4)} 50%{box-shadow:0 0 0 20px rgba(99,102,241,0)} }
+            .auth-spinner { display:inline-block; width:18px; height:18px; border:3px solid rgba(255,255,255,0.3); border-top-color:#fff; border-radius:50%; animation:spin 0.6s linear infinite; }
+            @keyframes spin { to{transform:rotate(360deg)} }
+            #authLoginBtn:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 8px 30px rgba(99,102,241,0.4) !important; }
+            #authLoginBtn:active:not(:disabled) { transform:translateY(0); }
+        </style>
+        <div style="position:relative; z-index:2; text-align:center; max-width:420px; width:90%;">
+            <!-- Logo -->
+            <div style="margin-bottom:32px;">
+                <div style="display:inline-flex; align-items:center; justify-content:center; width:80px; height:80px; border-radius:24px; background:linear-gradient(135deg, #6366f1, #a78bfa); box-shadow:0 12px 40px rgba(99,102,241,0.4); animation:authPulse 3s ease-in-out infinite; margin-bottom:20px;">
+                    <span style="font-family:'Outfit',sans-serif; font-weight:800; font-size:40px; color:#fff;">R</span>
+                </div>
+                <h1 style="font-family:'Outfit',sans-serif; font-size:32px; font-weight:800; color:#fff; margin:0 0 8px;">Ricko's <span style="background:linear-gradient(135deg, #818cf8, #c084fc); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">App</span></h1>
+                <p style="color:rgba(255,255,255,0.5); font-size:14px; font-weight:500; margin:0;">Business Management Hub</p>
+            </div>
+
+            <!-- Login Card -->
+            <div style="background:rgba(255,255,255,0.06); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.1); border-radius:24px; padding:40px 32px; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+                <h2 style="font-family:'Outfit',sans-serif; font-size:22px; font-weight:700; color:#fff; margin:0 0 8px;">Selamat Datang 👋</h2>
+                <p style="color:rgba(255,255,255,0.5); font-size:14px; margin:0 0 28px;">Masuk untuk mengakses dashboard bisnis Anda</p>
+
+                <button id="authLoginBtn" onclick="Auth.loginWithGoogle()" style="display:inline-flex; align-items:center; justify-content:center; gap:12px; width:100%; padding:14px 24px; border-radius:14px; border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.08); color:#fff; font-size:15px; font-weight:600; font-family:'Inter',sans-serif; cursor:pointer; transition:all 0.3s ease; box-shadow:0 4px 15px rgba(0,0,0,0.2);">
+                    <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+                    Masuk dengan Google
+                </button>
+
+                <p style="color:rgba(255,255,255,0.3); font-size:12px; margin:20px 0 0;">🔒 Hanya akun yang diizinkan yang dapat masuk</p>
+            </div>
+
+            <p style="color:rgba(255,255,255,0.25); font-size:11px; margin-top:24px;">Ricko's App v2.0 — Powered by Firebase</p>
+        </div>
+    </div>
+
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
@@ -190,6 +237,9 @@
                 <span>Backup & Restore DB</span>
             </a>
         </nav>
+        <div id="authUserInfo">
+            <!-- User info injected by auth.js -->
+        </div>
         <div class="sidebar-footer">
             <p>Ricko's App v2.0</p>
             <p class="sidebar-time" id="sidebarTime"></p>
@@ -1621,6 +1671,10 @@
     }
     </script>
     
+    <!-- Firebase & Auth -->
+    <script src="firebase-config.js"></script>
+    <script src="auth.js"></script>
+
     <!-- App Scripts -->
     <script src="storage.js"></script>
     <script src="config.js"></script>

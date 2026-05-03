@@ -599,4 +599,12 @@ const App = (() => {
 })();
 
 // Boot
-document.addEventListener('DOMContentLoaded', async () => await App.init());
+document.addEventListener('DOMContentLoaded', async () => {
+    // Auth.init() will call App.init() after successful login
+    if (typeof Auth !== 'undefined') {
+        Auth.init();
+    } else {
+        // Fallback: if auth module not loaded (local dev), init directly
+        await App.init();
+    }
+});
