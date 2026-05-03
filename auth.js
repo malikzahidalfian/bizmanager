@@ -19,6 +19,10 @@ const Auth = (() => {
                 currentUser = user;
                 console.log('✅ Logged in as:', user.email);
                 hideLoginScreen();
+                // Switch storage to cloud mode before initializing app
+                if (typeof StorageManager !== 'undefined' && StorageManager.syncMode) {
+                    StorageManager.syncMode();
+                }
                 // Initialize the app after login
                 if (typeof App !== 'undefined' && App.init) {
                     App.init();
