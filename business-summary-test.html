@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Summary Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .card { background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center; }
+        .card-icon { font-size: 2rem; margin-bottom: 10px; }
+        .card-value { font-size: 1.5rem; font-weight: bold; color: #007bff; }
+        .card-label { color: #666; }
+        .charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; }
+        .chart-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .chart-header { margin-bottom: 20px; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Business Summary Test</h1>
+
+        <div class="summary-cards" id="summaryCards">
+            <!-- Cards will be populated by JavaScript -->
+        </div>
+
+        <div class="charts">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>🏙️ Kota/Kabupaten Terbanyak</h3>
+                </div>
+                <div id="cityList"></div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>📦 Produk Terlaris</h3>
+                </div>
+                <div id="productList"></div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>🏪 Kontribusi Toko</h3>
+                </div>
+                <canvas id="shopChart" width="400" height="300"></canvas>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>📈 Tren Penjualan Bulanan</h3>
+                </div>
+                <canvas id="monthlyChart" width="400" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Test data
+        const testOrders = [
+            {
+                noPesanan: "TEST001",
+                tanggalOrder: "2024-01-15",
+                namaProduk: "Produk A",
+                namaVariasi: "Merah",
+                jumlah: 2,
+                revenue: 100000,
+                status: "Selesai"
+            },
+            {
+                noPesanan: "TEST002",
+                tanggalOrder: "2024-01-20",
+                namaProduk: "Produk B",
+                namaVariasi: "Biru",
+                jumlah: 1,
+                revenue: 50000,
+                status: "Selesai"
+            },
+            {
+                noPesanan: "TEST003",
+                tanggalOrder: "2024-02-10",
+                namaProduk: "Produk A",
+                namaVariasi: "Hijau",
+                jumlah: 3,
+                revenue: 150000,
+                status: "Dikirim"
+            }
+        ];
+
+        function analyzeOrderData(orders) {
+            const analysis = {
+                cities: {},
+                products: {},
+                shops: {},
+                monthly: {},
+                totalRevenue: 0,
+                totalOrders: orders.length,
+                totalProducts: 0
+            };
+
+            orders.forEach(order => {
+                const city = 'Tidak Diketahui';
+                if (!analysis.cities[city]) {
+                    analysis.cities[city] = { count: 0, revenue: 0 };
+                }
+                analysis.cities[city].count++;
+                analysis.cities[city].revenue += parseFloat(order.revenue || 0);
+
+                const productKey = `${order.namaProduk || 'Produk Tidak Diketahui'}_${order.namaVariasi || ''}`;
+                if (!analysis.products[productKey]) {
+                    analysis.products[productKey] = {
+                        productName: order.namaProduk || 'Produk Tidak Diketahui',
+                        variation: order.namaVariasi || null,
+                        quantity: 0,
+                        revenue: 0
+                    };
+                }
+                analysis.products[productKey].quantity += parseInt(order.jumlah || 1);
+                analysis.products[productKey].revenue += parseFloat(order.revenue || 0);
+                analysis.totalProducts += parseInt(order.jumlah || 1);
+
+                const shopId = 'Toko Tidak Diketahui';
+                if (!analysis.shops[shopId]) {
+                    analysis.shops[shopId] = { revenue: 0, orders: 0 };
+                }
+                analysis.shops[shopId].revenue += parseFloat(order.revenue || 0);
+                analysis.shops[shopId].orders++;
+
+                const date = new Date(order.tanggalOrder || order.tanggalBayar);
+                if (!isNaN(date.getTime())) {
+                    const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                    if (!analysis.monthly[monthKey]) {
+                        analysis.monthly[monthKey] = { revenue: 0, orders: 0 };
+                    }
+                    analysis.monthly[monthKey].revenue += parseFloat(order.revenue || 0);
+                    analysis.monthly[monthKey].orders++;
+                }
+
+                analysis.totalRevenue += parseFloat(order.revenue || 0);
+            });
+
+            return analysis;
+        }
+
+        function renderSummaryCards(analysis) {
+            const container = document.getElementById('summaryCards');
+            const cards = [
+                {
+                    icon: '💰',
+                    value: formatCurrency(analysis.totalRevenue),
+                    label: 'Total Revenue'
+                },
+                {
+                    icon: '📦',
+                    value: analysis.totalOrders.toString(),
+                    label: 'Total Pesanan'
+                },
+                {
+                    icon: '🛒',
+                    value: analysis.totalProducts.toString(),
+                    label: 'Produk Terjual'
+                },
+                {
+                    icon: '🏙️',
+                    value: Object.keys(analysis.cities).length.toString(),
+                    label: 'Kota/Kabupaten'
+                }
+            ];
+
+            container.innerHTML = cards.map(card => `
+                <div class="card">
+                    <div class="card-icon">${card.icon}</div>
+                    <div class="card-value">${card.value}</div>
+                    <div class="card-label">${card.label}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderCityList(cities) {
+            const container = document.getElementById('cityList');
+            const summaryText = `
+                <div style="padding: 20px; background: #f8f9fa; border-radius: 8px;">
+                    <div style="margin-bottom: 10px;">
+                        <strong>Total Kota:</strong> ${Object.keys(cities).length}
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <strong>Data Kota:</strong> Tidak tersedia dalam format saat ini
+                    </div>
+                    <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 10px; border-radius: 4px; font-size: 0.9rem;">
+                        💡 Untuk melihat data kota, pastikan file Excel berisi kolom informasi pengiriman/alamat pembeli
+                    </div>
+                </div>
+            `;
+            container.innerHTML = summaryText;
+        }
+
+        function renderProductList(products) {
+            const container = document.getElementById('productList');
+            const sortedProducts = Object.entries(products)
+                .sort(([,a], [,b]) => b.quantity - a.quantity)
+                .slice(0, 5);
+
+            if (sortedProducts.length === 0) {
+                container.innerHTML = '<div>Tidak ada data produk</div>';
+                return;
+            }
+
+            container.innerHTML = sortedProducts.map(([key, data], index) => `
+                <div style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee;">
+                    <div>
+                        <div style="font-weight: bold;">#${index + 1} ${data.productName}</div>
+                        ${data.variation ? `<div style="color: #666; font-size: 0.9rem;">Variasi: ${data.variation}</div>` : ''}
+                        <div style="color: #666; font-size: 0.9rem;">${data.quantity} terjual</div>
+                    </div>
+                    <div style="font-weight: bold; color: #007bff;">${formatCurrency(data.revenue)}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderShopChart(shops) {
+            const ctx = document.getElementById('shopChart');
+            const chart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Data Tersedia', 'Data Toko (Belum Tersedia)'],
+                    datasets: [{
+                        data: [100, 0],
+                        backgroundColor: ['#10b981', '#e5e7eb'],
+                        borderWidth: 2,
+                        borderColor: 'rgba(255,255,255,0.8)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    if (context.label === 'Data Tersedia') {
+                                        return 'Data produk dan revenue tersedia';
+                                    }
+                                    return 'Data toko akan tersedia dengan format data yang lebih lengkap';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderMonthlyChart(monthly) {
+            const ctx = document.getElementById('monthlyChart');
+            const sortedMonths = Object.entries(monthly)
+                .sort(([a], [b]) => a.localeCompare(b));
+
+            if (sortedMonths.length === 0) {
+                const chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Revenue',
+                            data: [0, 0, 0, 0, 0, 0],
+                            borderColor: '#e5e7eb',
+                            backgroundColor: 'rgba(229, 231, 235, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return formatCurrency(value);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                return;
+            }
+
+            const chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: sortedMonths.map(([month]) => {
+                        const [year, monthNum] = month.split('-');
+                        return `${monthNum}/${year}`;
+                    }),
+                    datasets: [{
+                        label: 'Revenue',
+                        data: sortedMonths.map(([,data]) => data.revenue),
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatCurrency(value);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(amount);
+        }
+
+        // Run test
+        console.log('Testing Business Summary with sample data...');
+        console.log('Orders:', testOrders);
+
+        const analysis = analyzeOrderData(testOrders);
+        console.log('Analysis:', analysis);
+
+        renderSummaryCards(analysis);
+        renderCityList(analysis.cities);
+        renderProductList(analysis.products);
+        renderShopChart(analysis.shops);
+        renderMonthlyChart(analysis.monthly);
+
+        console.log('✅ Business Summary test completed!');
+    </script>
+</body>
+</html>

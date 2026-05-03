@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Ricko's App — Aplikasi manajemen bisnis marketplace lengkap. Hitung profit Shopee & TikTok Shop, analisis data orderan, dan kelola task tim.">
+    <meta name="theme-color" content="#1e1b4b">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Ricko's App — Business Management Hub</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/id.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <script>
+        // Prevent Flash of Unstyled Content (FOUC) for dark theme
+        if (localStorage.getItem('bizmanager_theme') === 'dark' || (!localStorage.getItem('bizmanager_theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.body.classList.add('dark-theme');
+        }
+    </script>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <svg class="sidebar-logo-icon" viewBox="0 0 44 44" fill="none">
+                    <rect width="44" height="44" rx="12" fill="url(#logoGrad)"/>
+                    <text x="22" y="30" text-anchor="middle" fill="white" font-family="Outfit, sans-serif" font-weight="800" font-size="26">R</text>
+                    <defs><linearGradient id="logoGrad" x1="0" y1="0" x2="44" y2="44"><stop stop-color="#6366f1"/><stop offset="1" stop-color="#a78bfa"/></linearGradient></defs>
+                </svg>
+                <span class="sidebar-brand">Ricko's <span class="accent">App</span></span>
+            </div>
+            <button class="sidebar-close" id="sidebarClose" aria-label="Tutup sidebar">✕</button>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#dashboard" class="nav-item" data-page="dashboard" id="navDashboard">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                <span>Dashboard</span>
+            </a>
+
+            <!-- Pengaturan Toko Group -->
+            <div class="nav-group">
+                <button class="nav-item nav-group-btn" id="navGroupToko">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    <span>Pengaturan Toko</span>
+                    <svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="nav-submenu" id="subMenuToko">
+                    <a href="#shop-manager-shopee" class="nav-item" data-page="shop-manager-shopee" id="navShopShopee">
+                        <svg class="nav-icon" viewBox="0 0 48 48" fill="none" style="width:18px;height:18px;">
+                            <rect width="48" height="48" rx="14" fill="#EE4D2D"/>
+                            <path d="M16 16v-3.5c0-4 3.5-7.5 8-7.5s8 3.5 8 7.5V16" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                            <path d="M9 16l2.5 24c.2 2 1.5 3 3.5 3h18c2 0 3.3-1 3.5-3L39 16H9z" fill="white"/>
+                            <path d="M28.5 25.5c0-1.5-1.2-2.3-3.2-2.8l-1.8-.5c-1.5-.4-2.2-1-2.2-2 0-1.1 1.2-1.8 2.8-1.8 1.6 0 2.8.6 2.8.6l1-2.5s-1.4-.8-3.8-.8c-3.2 0-5.4 1.8-5.4 4.5 0 2.5 1.7 3.5 4.3 4.2l1.6.4c1.8.5 2.4 1.2 2.4 2.2 0 1.3-1.4 2.1-3.2 2.1-2 0-3.6-1.1-3.6-1.1l-1 2.6s1.8 1.2 4.6 1.2c3.4 0 5.8-1.7 5.8-4.8z" fill="#EE4D2D"/>
+                        </svg>
+                        <span>Shopee</span>
+                    </a>
+                    <a href="#shop-manager-tiktok" class="nav-item" data-page="shop-manager-tiktok" id="navShopTiktok">
+                        <svg class="nav-icon" viewBox="0 0 48 48" fill="none" style="width:18px;height:18px;">
+                            <rect width="48" height="48" rx="14" fill="#010101"/>
+                            <g transform="translate(10, 8) scale(1.3)">
+                                <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.09-1.03-1.67-.98-2.78-2.62-2.94-4.57-.05-1.42.06-2.84.44-4.22.6-2.12 2.27-3.72 4.39-4.16.89-.15 1.8-.21 2.7-.21.05 1.56.03 3.13.05 4.69-.67-.14-1.35-.19-2.03-.13-1.17.07-2.28.6-2.97 1.57-.68 1.01-.87 2.23-.52 3.39.37 1.25 1.34 2.16 2.58 2.44 1.17.27 2.4.07 3.39-.56.84-.52 1.36-1.33 1.51-2.31.14-1.07.13-2.16.14-3.24.01-3.66.01-7.32 0-10.98z" fill="#25F4EE" transform="translate(-1, 0)"/>
+                                <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.09-1.03-1.67-.98-2.78-2.62-2.94-4.57-.05-1.42.06-2.84.44-4.22.6-2.12 2.27-3.72 4.39-4.16.89-.15 1.8-.21 2.7-.21.05 1.56.03 3.13.05 4.69-.67-.14-1.35-.19-2.03-.13-1.17.07-2.28.6-2.97 1.57-.68 1.01-.87 2.23-.52 3.39.37 1.25 1.34 2.16 2.58 2.44 1.17.27 2.4.07 3.39-.56.84-.52 1.36-1.33 1.51-2.31.14-1.07.13-2.16.14-3.24.01-3.66.01-7.32 0-10.98z" fill="#FE2C55" transform="translate(1, 1)"/>
+                                <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.09-1.03-1.67-.98-2.78-2.62-2.94-4.57-.05-1.42.06-2.84.44-4.22.6-2.12 2.27-3.72 4.39-4.16.89-.15 1.8-.21 2.7-.21.05 1.56.03 3.13.05 4.69-.67-.14-1.35-.19-2.03-.13-1.17.07-2.28.6-2.97 1.57-.68 1.01-.87 2.23-.52 3.39.37 1.25 1.34 2.16 2.58 2.44 1.17.27 2.4.07 3.39-.56.84-.52 1.36-1.33 1.51-2.31.14-1.07.13-2.16.14-3.24.01-3.66.01-7.32 0-10.98z" fill="#FFFFFF"/>
+                            </g>
+                        </svg>
+                        <span>TikTok Shop</span>
+                    </a>
+                    <a href="#shop-manager-lazada" class="nav-item" data-page="shop-manager-lazada" id="navShopLazada">
+                        <svg class="nav-icon" viewBox="0 0 48 48" fill="none" style="width:18px;height:18px;">
+                            <rect width="48" height="48" rx="14" fill="#0F146D"/>
+                            <path d="M26.5 35.8l-10.3-9c-2.8-2.5-3.6-6.6-1.5-9.6 1.8-2.6 5.5-3.3 8.3-1.5L24 16.2v17l2.5 2.6z" fill="#F47421"/>
+                            <path d="M21.5 35.8l10.3-9c2.8-2.5 3.6-6.6 1.5-9.6-1.8-2.6-5.5-3.3-8.3-1.5L24 16.2v17l-2.5 2.6z" fill="#F9A01B"/>
+                        </svg>
+                        <span>Lazada</span>
+                    </a>
+                </div>
+            </div>
+
+            <a href="#shop-products" class="nav-item" data-page="shop-products" id="navShopProducts">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                <span>Pengaturan Produk</span>
+            </a>
+
+            <!-- Manage Order Group -->
+            <div class="nav-group">
+                <button class="nav-item nav-group-btn" id="navGroupManageOrder">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                    <span>Manage Order</span>
+                    <svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="nav-submenu" id="subMenuManageOrder">
+                    <a href="#order-shipping" class="nav-item" data-page="order-shipping" id="navOrderShipping">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                        <span>Data Pesanan</span>
+                    </a>
+                    <a href="#income-data" class="nav-item" data-page="income-data" id="navIncomeData">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                        <span>Penghasilan</span>
+                    </a>
+                    <a href="#roas" class="nav-item" data-page="roas" id="navRoas">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+                        <span>Performa Iklan</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Business Summary -->
+            <a href="#business-summary" class="nav-item" data-page="business-summary" id="navBusinessSummary">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19v-6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2z"/><path d="M13 19v-6a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2z"/><path d="M21 12V5a2 2 0 0 0-2-2h-5a2 2 0 0 0-2 2v3"/><circle cx="7" cy="9" r="1"/><circle cx="12" cy="9" r="1"/><circle cx="17" cy="9" r="1"/><circle cx="7" cy="13" r="1"/><circle cx="12" cy="13" r="1"/><circle cx="17" cy="13" r="1"/></svg>
+                <span>Business Summary</span>
+            </a>
+
+            <!-- Fitur Lainnya Group -->
+            <div class="nav-group">
+                <button class="nav-item nav-group-btn" id="navGroupLainnya">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                    <span>Fitur Lainnya</span>
+                    <svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="nav-submenu" id="subMenuLainnya">
+                    <a href="#target-profit" class="nav-item" data-page="target-profit" id="navTargetProfit">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8l4 4-4 4M8 12h8"/></svg>
+                        <span>Target Profit</span>
+                    </a>
+                    <a href="#calculator" class="nav-item" data-page="calculator" id="navCalculator">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="14" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="16" y2="18"/></svg>
+                        <span>Profit Calculator</span>
+                    </a>
+                    <a href="#competitors" class="nav-item" data-page="competitors" id="navCompetitors">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        <span>Kompetitor</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="nav-divider" style="height:1px; background:var(--border-color); margin:12px 16px;"></div>
+            
+            <div class="nav-group">
+                <button class="nav-item nav-group-btn" id="navGroupAffiliate">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2-2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    <span>Komisi Affiliate</span>
+                    <svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="nav-submenu">
+                    <a href="#affiliate-shopee" class="nav-item" data-page="affiliate-shopee" id="navAffiliateShopee" style="gap:10px;">
+                        <svg class="nav-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:20px; height:20px; border-radius:4px; box-shadow:0 2px 4px rgba(0,0,0,0.2);">
+                            <rect width="48" height="48" rx="14" fill="#EE4D2D"/>
+                            <path d="M16 16v-3.5c0-4 3.5-7.5 8-7.5s8 3.5 8 7.5V16" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                            <path d="M9 16l2.5 24c.2 2 1.5 3 3.5 3h18c2 0 3.3-1 3.5-3L39 16H9z" fill="white"/>
+                            <path d="M28.5 25.5c0-1.5-1.2-2.3-3.2-2.8l-1.8-.5c-1.5-.4-2.2-1-2.2-2 0-1.1 1.2-1.8 2.8-1.8 1.6 0 2.8.6 2.8.6l1-2.5s-1.4-.8-3.8-.8c-3.2 0-5.4 1.8-5.4 4.5 0 2.5 1.7 3.5 4.3 4.2l1.6.4c1.8.5 2.4 1.2 2.4 2.2 0 1.3-1.4 2.1-3.2 2.1-2 0-3.6-1.1-3.6-1.1l-1 2.6s1.8 1.2 4.6 1.2c3.4 0 5.8-1.7 5.8-4.8z" fill="#EE4D2D"/>
+                        </svg>
+                        <span>Shopee Affiliate</span>
+                    </a>
+                    
+                    <a href="#affiliate-tiktok" class="nav-item" data-page="affiliate-tiktok" id="navAffiliateTiktok" style="gap:10px;">
+                        <svg class="nav-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:20px; height:20px; border-radius:4px; box-shadow:0 2px 4px rgba(0,0,0,0.2);">
+                            <rect width="48" height="48" rx="14" fill="#010101"/>
+                            <g transform="translate(10, 8) scale(1.3)">
+                                <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.09-1.03-1.67-.98-2.78-2.62-2.94-4.57-.05-1.42.06-2.84.44-4.22.6-2.12 2.27-3.72 4.39-4.16.89-.15 1.8-.21 2.7-.21.05 1.56.03 3.13.05 4.69-.67-.14-1.35-.19-2.03-.13-1.17.07-2.28.6-2.97 1.57-.68 1.01-.87 2.23-.52 3.39.37 1.25 1.34 2.16 2.58 2.44 1.17.27 2.4.07 3.39-.56.84-.52 1.36-1.33 1.51-2.31.14-1.07.13-2.16.14-3.24.01-3.66.01-7.32 0-10.98z" fill="#25F4EE" transform="translate(-1, 0)"/>
+                                <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.09-1.03-1.67-.98-2.78-2.62-2.94-4.57-.05-1.42.06-2.84.44-4.22.6-2.12 2.27-3.72 4.39-4.16.89-.15 1.8-.21 2.7-.21.05 1.56.03 3.13.05 4.69-.67-.14-1.35-.19-2.03-.13-1.17.07-2.28.6-2.97 1.57-.68 1.01-.87 2.23-.52 3.39.37 1.25 1.34 2.16 2.58 2.44 1.17.27 2.4.07 3.39-.56.84-.52 1.36-1.33 1.51-2.31.14-1.07.13-2.16.14-3.24.01-3.66.01-7.32 0-10.98z" fill="#FE2C55" transform="translate(1, 1)"/>
+                                <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.09-1.03-1.67-.98-2.78-2.62-2.94-4.57-.05-1.42.06-2.84.44-4.22.6-2.12 2.27-3.72 4.39-4.16.89-.15 1.8-.21 2.7-.21.05 1.56.03 3.13.05 4.69-.67-.14-1.35-.19-2.03-.13-1.17.07-2.28.6-2.97 1.57-.68 1.01-.87 2.23-.52 3.39.37 1.25 1.34 2.16 2.58 2.44 1.17.27 2.4.07 3.39-.56.84-.52 1.36-1.33 1.51-2.31.14-1.07.13-2.16.14-3.24.01-3.66.01-7.32 0-10.98z" fill="#FFFFFF"/>
+                            </g>
+                        </svg>
+                        <span>TikTok Affiliate</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="nav-divider" style="height:1px; background:var(--border-color); margin:12px 16px;"></div>
+            
+            <a href="#tasks" class="nav-item" data-page="tasks" id="navTasks">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                <span>Task Tracker</span>
+                <span class="nav-badge hidden" id="taskBadge">0</span>
+            </a>
+            
+            <div class="nav-divider" style="height:1px; background:var(--border-color); margin:12px 16px;"></div>
+            
+            <a href="#" onclick="openSyncModal()" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                <span>Backup & Restore DB</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <p>Ricko's App v2.0</p>
+            <p class="sidebar-time" id="sidebarTime"></p>
+        </div>
+    </aside>
+
+    <!-- Mobile overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Main wrapper -->
+    <div class="main-wrapper" id="mainWrapper">
+        <!-- Top bar -->
+        <header class="topbar">
+            <button class="topbar-menu" id="sidebarToggle" aria-label="Toggle menu">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+            <h2 class="topbar-title" id="pageTitle">Dashboard</h2>
+            <div class="topbar-right" style="display:flex; align-items:center; gap:12px;">
+                <button id="themeToggle" style="background:var(--bg-card); border:1px solid var(--border-color); color:var(--text-primary); border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer;" aria-label="Toggle Dark Mode">
+                    🌙
+                </button>
+                <span class="topbar-date" id="topbarDate"></span>
+            </div>
+        </header>
+
+        <!-- ===== PAGE: DASHBOARD ===== -->
+        <main class="page active" id="pageDashboard">
+            <div class="page-content">
+
+                <!-- Master Balance Card -->
+                <div style="background:var(--accent-gradient); border-radius:16px; padding:24px; color:#fff; display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2); scroll-margin-top:130px;">
+                    <div>
+                        <div style="font-size:14px; font-weight:600; text-transform:uppercase; letter-spacing:1px; opacity:0.9;">Total Penghasilanku</div>
+                        <div id="dashMasterGrandTotal" style="font-size:36px; font-weight:800; font-family:var(--font-heading); margin-top:4px;">Rp 0</div>
+                        <div id="dashMasterGrandTotalDetail" style="font-size:13px; opacity:0.8; margin-top:4px; font-weight: 500;">Berdasarkan filter tanggal yang dipilih</div>
+                    </div>
+                    <div style="width:64px; height:64px; background:rgba(255,255,255,0.2); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:32px; box-shadow: inset 0 0 16px rgba(0,0,0,0.1);">
+                        💰
+                    </div>
+                </div>
+
+                <!-- Period filter -->
+                <div id="dashSecStats" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;scroll-margin-top:130px;">
+                    <h3 style="font-family:var(--font-heading);font-size:18px;font-weight:700;color:var(--text-primary);">📊 Ringkasan Bisnis</h3>
+                    <style>
+                        .premium-date-wrapper:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(99, 102, 241, 0.12) !important; }
+                        .premium-date-wrapper:hover .premium-date-glow { opacity: 1 !important; filter: blur(4px); }
+                        .premium-date-wrapper:active { transform: translateY(0); }
+                        .premium-date-wrapper input { border: none !important; box-shadow: none !important; background: transparent !important; padding: 0 !important; margin: 0 !important; outline: none !important; }
+                        .flatpickr-calendar { font-family: 'Outfit', sans-serif !important; }
+                        .flatpickr-day { font-family: 'Outfit', sans-serif !important; font-weight: 600 !important; font-size: 14px !important; }
+                        .flatpickr-current-month { font-family: 'Outfit', sans-serif !important; font-weight: 700 !important; }
+                    </style>
+                    <div id="dashPeriodGroup" class="premium-date-group">
+                        <div class="premium-date-wrapper" onclick="document.getElementById('dashCustomDateRange').click()" style="position:relative; display:inline-flex; align-items:center; background:var(--bg-card); border: 1px solid rgba(99, 102, 241, 0.15); border-radius: 100px; padding: 4px; box-shadow: 0 4px 16px rgba(0,0,0,0.03); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor:pointer;">
+                            <!-- Glow Hover Effect -->
+                            <div style="position:absolute; inset:-1px; border-radius:100px; background:var(--accent-gradient); opacity:0; transition:0.3s;" class="premium-date-glow"></div>
+                            
+                            <div style="position:relative; display:flex; align-items:center; gap: 10px; z-index:2; padding: 6px 14px 6px 12px; border-radius: 100px; background: var(--bg-card);">
+                                <div style="display:flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; background:rgba(99, 102, 241, 0.08);">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+                                    </svg>
+                                </div>
+                                <input type="text" id="dashCustomDateRange" placeholder="Tentukan Periode Waktu..." style="border:none;background:transparent;color:var(--text-primary);font-size:14.5px;font-weight:700;font-family:'Outfit', sans-serif;width:210px;outline:none;cursor:pointer; letter-spacing:0.03em;" readonly="readonly">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dash-card stat-card" id="dashTotalRevenue">
+                        <div class="stat-icon revenue-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Total Revenue</span>
+                            <span class="stat-value" id="dashRevVal">Rp 0</span>
+                        </div>
+                    </div>
+                    <div class="dash-card stat-card" id="dashTotalProfit">
+                        <div class="stat-icon profit-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Total Profit</span>
+                            <span class="stat-value" id="dashProfitVal">Rp 0</span>
+                        </div>
+                    </div>
+                    <div class="dash-card stat-card" id="dashTotalOrders">
+                        <div class="stat-icon orders-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Total Orderan</span>
+                            <span class="stat-value" id="dashOrdersVal">0</span>
+                        </div>
+                    </div>
+                    <div class="dash-card stat-card" id="dashAdSpendTotal">
+                        <div class="stat-icon margin-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Total Ad Spend</span>
+                            <span class="stat-value" id="dashAdSpendTotalVal">Rp 0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chart Section -->
+                <!-- Shop Performance Section -->
+                <div class="card" style="margin-top:24px;scroll-margin-top:130px;" id="dashSecShopPerf">
+                    <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;">
+                        <h2>🏪 Performa per Toko</h2>
+                        <a href="#target-profit" style="font-size:12px;color:var(--accent);text-decoration:none;font-weight:600;">Atur Target Bulanan →</a>
+                    </div>
+                    <div class="card-body">
+                        <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));gap:16px;" id="dashShopPerfGrid">
+                            <!-- Injected by app.js -->
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <!-- Affiliate Performance Section -->
+                <div class="card" style="margin-top:24px;scroll-margin-top:130px;" id="dashSecAffiliate">
+                    <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;">
+                        <h2>🤝 Komisi Affiliate Keseluruhan</h2>
+                        <a href="#affiliate-shopee" style="font-size:12px;color:var(--accent);text-decoration:none;font-weight:600;">Lihat Detail →</a>
+                    </div>
+                    <div class="card-body">
+                         <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:16px;">
+                            <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:20px;text-align:center;">
+                                <div style="font-size:11px;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.03em;margin-bottom:8px;">Total Keseluruhan</div>
+                                <div style="font-size:24px;font-weight:700;color:var(--accent);font-family:var(--font-heading);" id="dashAffTotal">Rp 0</div>
+                            </div>
+                            <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:20px;text-align:center;">
+                                <div style="font-size:11px;color:var(--text-muted);font-weight:600;text-transform:uppercase;margin-bottom:8px;">Total Shopee</div>
+                                <div style="font-size:24px;font-weight:700;color:#ee4d2d;font-family:var(--font-heading);" id="dashAffShopee">Rp 0</div>
+                            </div>
+                            <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:20px;text-align:center;">
+                                <div style="font-size:11px;color:var(--text-muted);font-weight:600;text-transform:uppercase;margin-bottom:8px;">Total TikTok</div>
+                                <div style="font-size:24px;font-weight:700;color:var(--text-primary);font-family:var(--font-heading);" id="dashAffTiktok">Rp 0</div>
+                            </div>
+                            <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:20px;text-align:center;">
+                                <div style="font-size:11px;color:var(--text-muted);font-weight:600;text-transform:uppercase;margin-bottom:8px;">Bulan Ini</div>
+                                <div style="font-size:24px;font-weight:700;color:var(--green);font-family:var(--font-heading);" id="dashAffMonth">Rp 0</div>
+                            </div>
+                         </div>
+                    </div>
+                </div>
+
+
+
+            </div>
+
+
+        </main>
+
+        <!-- ===== PAGE: PENGATURAN TOKO (SHOP MANAGER) ===== -->
+        <main class="page" id="pageShopManager">
+            <div class="page-content">
+                <div id="shopManagerContent" style="max-width:900px; margin:0 auto;">
+                    <!-- Shop Manager UI will be injected here by shop-manager.js -->
+                </div>
+            </div>
+        </main>
+
+        <!-- ===== PAGE: PENGATURAN PRODUK (SHOP SELECTOR) ===== -->
+        <main class="page" id="pageShopProducts">
+            <div class="page-content">
+                <div style="max-width:900px; margin:0 auto;">
+                    <div style="margin-bottom: 24px;">
+                        <h2 style="font-size:24px; font-weight:700; color:var(--text); margin-bottom:4px;">Pengaturan Produk</h2>
+                        <p style="color:var(--text-muted); font-size:14px;">Pilih toko untuk mengelola daftar produknya.</p>
+                    </div>
+                    <div id="shopProductsList" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px;">
+                        <!-- List of shops will be injected here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- ===== PAGE: BUSINESS SUMMARY ===== -->
+        <main class="page" id="pageBusinessSummary">
+            <div class="page-content">
+                <div class="page-header">
+                    <h1>📊 Business Summary</h1>
+                    <p>Analisis mendalam data penjualan dan performa bisnis Anda</p>
+                </div>
+
+                <!-- Summary Cards -->
+                <div class="summary-cards-grid" id="summaryCardsGrid">
+                    <!-- Cards will be populated by JavaScript -->
+                </div>
+
+                <!-- Charts Section -->
+                <div class="charts-section">
+                    <div class="chart-row">
+                        <div class="chart-card">
+                            <div class="card-header">
+                                <h3>🏙️ Kota/Kabupaten Terbanyak</h3>
+                            </div>
+                            <div class="card-body">
+                                <div id="cityList">
+                                    <!-- Data will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chart-card">
+                            <div class="card-header">
+                                <h3>📦 Produk Terlaris</h3>
+                            </div>
+                            <div class="card-body">
+                                <div id="productList">
+                                    <!-- Data will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-row">
+                        <div class="chart-card">
+                            <div class="card-header">
+                                <h3>🏪 Kontribusi Toko</h3>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="shopChart" width="400" height="300"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-card">
+                            <div class="card-header">
+                                <h3>📈 Tren Penjualan Bulanan</h3>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="monthlyChart" width="400" height="300"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Table -->
+                <div class="card" style="margin-top: 24px;">
+                    <div class="card-header">
+                        <h3>📋 Detail Analisis</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="data-table" id="businessSummaryTable">
+                                <thead>
+                                    <tr>
+                                        <th>Kategori</th>
+                                        <th>Item</th>
+                                        <th>Jumlah</th>
+                                        <th>Persentase</th>
+                                        <th>Total Revenue</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="summaryTableBody">
+                                    <!-- Data will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- ===== PAGE: PROFIT CALCULATOR ===== -->
+        <main class="page" id="pageCalculator">
+            <div class="page-content">
+                <!-- Tab Navigation -->
+                <nav class="tab-nav" id="calcTabNav">
+                    <button class="tab-btn active" data-tab="shopee" id="tabShopee">
+                        <span class="tab-icon">🛒</span>
+                        <span>Shopee</span>
+                    </button>
+                    <button class="tab-btn" data-tab="tiktok" id="tabTiktok">
+                        <span class="tab-icon">🎵</span>
+                        <span>TikTok Shop</span>
+                    </button>
+                </nav>
+
+                <!-- SHOPEE TAB -->
+                <section class="tab-panel active" id="panelShopee">
+                    <div class="form-grid">
+                        <div class="card input-card">
+                            <div class="card-header"><h2>📦 Detail Produk</h2></div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="shopeeHargaJual">Harga Jual (Rp)</label>
+                                    <input type="text" id="shopeeHargaJual" class="form-input" placeholder="100,000" inputmode="numeric">
+                                </div>
+                                <div class="form-group">
+                                    <label for="shopeeModal">Harga Modal (Rp)</label>
+                                    <input type="text" id="shopeeModal" class="form-input" placeholder="50,000" inputmode="numeric">
+                                </div>
+                                <div class="form-group">
+                                    <label for="shopeeOngkir">Ongkos Kirim Penjual (Rp)</label>
+                                    <input type="text" id="shopeeOngkir" class="form-input" placeholder="0" inputmode="numeric">
+                                    <span class="form-hint">Biaya ongkir yang ditanggung penjual</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="shopeeJumlahItem">Jumlah Item per Order</label>
+                                    <input type="number" id="shopeeJumlahItem" class="form-input" value="1" min="1">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card fee-card">
+                            <div class="card-header"><h2>⚙️ Pengaturan Biaya</h2></div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="shopeeKategori">Kategori Produk</label>
+                                    <select id="shopeeKategori" class="form-select">
+                                        <option value="10.0">Fashion, FMCG, Lifestyle — 10.0%</option>
+                                        <option value="9.5">Non-Special Category — 9.5%</option>
+                                        <option value="9.0">Electronics, Skincare — 9.0%</option>
+                                        <option value="6.75">Formula Milk, Supplements — 6.75%</option>
+                                        <option value="5.25">High-End Electronics — 5.25%</option>
+                                        <option value="4.25">Precious Metals, Jewelry — 4.25%</option>
+                                        <option value="2.5">E-Money, Tickets (Special) — 2.5%</option>
+                                        <option value="custom">Custom (atur sendiri)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group hidden" id="shopeeCustomFeeGroup">
+                                    <label for="shopeeCustomFee">Biaya Admin Custom (%)</label>
+                                    <input type="number" id="shopeeCustomFee" class="form-input" placeholder="5" step="0.1" min="0" max="100">
+                                </div>
+                                <div class="toggle-group">
+                                    <label class="toggle-label">
+                                        <span>Gratis Ongkir XTRA</span>
+                                        <div class="toggle-wrapper">
+                                            <input type="checkbox" id="shopeeGratisOngkir" checked>
+                                            <span class="toggle-slider"></span>
+                                        </div>
+                                    </label>
+                                    <span class="form-hint">4.0% (maks Rp 10,000/produk)</span>
+                                </div>
+                                <div class="toggle-group">
+                                    <label class="toggle-label">
+                                        <span>Pre-Order</span>
+                                        <div class="toggle-wrapper">
+                                            <input type="checkbox" id="shopeePreOrder">
+                                            <span class="toggle-slider"></span>
+                                        </div>
+                                    </label>
+                                    <span class="form-hint">+3% biaya tambahan</span>
+                                </div>
+                                <div class="toggle-group">
+                                    <label class="toggle-label">
+                                        <span>Promo Layanan Ekstra</span>
+                                        <div class="toggle-wrapper">
+                                            <input type="checkbox" id="shopeePromoEkstra" checked>
+                                            <span class="toggle-slider"></span>
+                                        </div>
+                                    </label>
+                                    <span class="form-hint">4.5% biaya promo layanan ekstra</span>
+                                </div>
+                                <div class="toggle-group">
+                                    <label class="toggle-label">
+                                        <span>Hemat Biaya Kirim</span>
+                                        <div class="toggle-wrapper">
+                                            <input type="checkbox" id="shopeeHematKirim" checked>
+                                            <span class="toggle-slider"></span>
+                                        </div>
+                                    </label>
+                                    <span class="form-hint">Rp 350 per pesanan</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="shopeeKomisiAffiliate">Komisi Affiliate (%)</label>
+                                    <input type="number" id="shopeeKomisiAffiliate" class="form-input" placeholder="0" step="0.1" min="0" max="100">
+                                    <span class="form-hint">Opsional — isi jika pakai affiliate (cth: 10)</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="shopeeDiskonSeller">Diskon dari Penjual (Rp)</label>
+                                    <input type="text" id="shopeeDiskonSeller" class="form-input" placeholder="0" inputmode="numeric">
+                                    <span class="form-hint">Voucher / diskon yang ditanggung penjual</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn-calculate shopee-btn" id="btnCalculateShopee">
+                        <span class="btn-text">Hitung Profit</span>
+                        <span class="btn-icon">→</span>
+                    </button>
+                    <div class="result-section hidden" id="resultShopee">
+                        <div class="card result-card">
+                            <div class="card-header"><h2>📊 Hasil Perhitungan — Shopee</h2></div>
+                            <div class="card-body">
+                                <div class="result-breakdown" id="breakdownShopee"></div>
+                                <div class="result-summary" id="summaryShopee"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TIKTOK TAB -->
+                <section class="tab-panel" id="panelTiktok">
+                    <div class="form-grid">
+                        <div class="card input-card">
+                            <div class="card-header"><h2>📦 Detail Produk</h2></div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="tiktokHargaJual">Harga Jual (Rp)</label>
+                                    <input type="text" id="tiktokHargaJual" class="form-input" placeholder="100,000" inputmode="numeric">
+                                </div>
+                                <div class="form-group">
+                                    <label for="tiktokModal">Harga Modal (Rp)</label>
+                                    <input type="text" id="tiktokModal" class="form-input" placeholder="50,000" inputmode="numeric">
+                                </div>
+                                <div class="form-group">
+                                    <label for="tiktokOngkir">Ongkos Kirim Penjual (Rp)</label>
+                                    <input type="text" id="tiktokOngkir" class="form-input" placeholder="0" inputmode="numeric">
+                                    <span class="form-hint">Biaya ongkir yang ditanggung penjual</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="tiktokJumlahItem">Jumlah Item per Order</label>
+                                    <input type="number" id="tiktokJumlahItem" class="form-input" value="1" min="1">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card fee-card">
+                            <div class="card-header"><h2>⚙️ Pengaturan Biaya</h2></div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="tiktokKategori">Kategori Produk</label>
+                                    <select id="tiktokKategori" class="form-select">
+                                        <option value="10.0">Umum (setelah diskon 20%) — ~8%</option>
+                                        <option value="8.0">Kategori LIVE / GMV Max — 8.0%</option>
+                                        <option value="6.97">Kategori di luar tabel — 6.97%</option>
+                                        <option value="6.0">Komisi Dinamis Maks — 6.0%</option>
+                                        <option value="4.0">Komisi Dinamis Min — 4.0%</option>
+                                        <option value="1.0">Kategori Terendah — 1.0%</option>
+                                        <option value="custom">Custom (atur sendiri)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group hidden" id="tiktokCustomFeeGroup">
+                                    <label for="tiktokCustomFee">Komisi Platform Custom (%)</label>
+                                    <input type="number" id="tiktokCustomFee" class="form-input" placeholder="5" step="0.1" min="0" max="100">
+                                </div>
+                                <div class="toggle-group">
+                                    <label class="toggle-label">
+                                        <span>Pre-Order</span>
+                                        <div class="toggle-wrapper">
+                                            <input type="checkbox" id="tiktokPreOrder">
+                                            <span class="toggle-slider"></span>
+                                        </div>
+                                    </label>
+                                    <span class="form-hint">+3% biaya layanan pre-order</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="tiktokDiskonSeller">Diskon dari Penjual (Rp)</label>
+                                    <input type="text" id="tiktokDiskonSeller" class="form-input" placeholder="0" inputmode="numeric">
+                                    <span class="form-hint">Diskon yang ditanggung penjual</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn-calculate tiktok-btn" id="btnCalculateTiktok">
+                        <span class="btn-text">Hitung Profit</span>
+                        <span class="btn-icon">→</span>
+                    </button>
+                    <div class="result-section hidden" id="resultTiktok">
+                        <div class="card result-card">
+                            <div class="card-header"><h2>📊 Hasil Perhitungan — TikTok Shop</h2></div>
+                            <div class="card-body">
+                                <div class="result-breakdown" id="breakdownTiktok"></div>
+                                <div class="result-summary" id="summaryTiktok"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- ===== PAGE: PRODUCT LIST ===== -->
+        <main class="page" id="pageProducts">
+            <div class="page-content">
+                <!-- Header controls -->
+                <div class="product-controls">
+                    <div class="product-search-group">
+                        <input type="text" id="productSearch" class="form-input product-search" placeholder="🔍 Cari produk...">
+                        <select id="productFilterJenis" class="form-select filter-select">
+                            <option value="all">Semua Jenis</option>
+                            <option value="fashion">👕 Fashion</option>
+                            <option value="elektronik">📱 Elektronik</option>
+                            <option value="makanan">🍜 Makanan & Minuman</option>
+                            <option value="kecantikan">💄 Kecantikan</option>
+                            <option value="rumah">🏠 Rumah Tangga</option>
+                            <option value="kesehatan">💊 Kesehatan</option>
+                            <option value="olahraga">⚽ Olahraga</option>
+                            <option value="otomotif">🚗 Otomotif</option>
+                            <option value="lainnya">📦 Lainnya</option>
+                        </select>
+                    </div>
+                    <div class="product-actions-row">
+                        <span class="product-count" id="productCount">0 produk</span>
+                        <div class="product-sort-group">
+                            <button class="product-sort-btn" data-sort="name">Nama ↕</button>
+                            <button class="product-sort-btn" data-sort="hargaJual">Harga ↕</button>
+                            <button class="product-sort-btn" data-sort="modal">Modal ↕</button>
+                        </div>
+                        <button class="btn-filter" id="btnDeleteAllProducts" style="color:var(--red); border-color:var(--red);">🗑️ Hapus Semua</button>
+                        <button class="btn-filter" id="btnImportProduct">📥 Import Excel</button>
+                        <button class="btn-add-task" id="btnAddProduct">+ Produk Baru</button>
+                    </div>
+                </div>
+
+                <!-- Product grid -->
+                <div class="product-grid" id="productGridBody"></div>
+            </div>
+        </main>
+
+
+        <!-- ===== PAGE: ORDER SHIPPING ===== -->
+        <main class="page" id="pageOrderShipping">
+            <div class="page-content">
+                
+                <!-- 1. Shop Selection View -->
+                <div id="osShopSelectionView">
+                    <div style="margin-bottom: 20px;">
+                        <h2 style="font-size:24px; font-weight:700;">🏪 Data Pesanan</h2>
+                        <p class="form-hint" style="margin-top:4px;">Pilih toko untuk melihat dan mengelola riwayat pesanannya.</p>
+                    </div>
+                    <div id="orderShippingShopList"></div>
+                </div>
+
+                <!-- 2. History View -->
+                <div id="osHistoryView" class="hidden">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 16px; flex-wrap:wrap; gap:12px;">
+                        <div>
+                            <button onclick="OrderShipping.backToShopSelection()" class="btn-modal-cancel" style="padding:6px 12px;font-size:12px;margin-bottom:12px;background:#fff;border:1px solid rgba(0,0,0,0.1);cursor:pointer;">← Kembali ke List Toko</button>
+                            <h2 style="font-size:22px; font-weight:700;" id="osHistoryTitle">Data Pesanan</h2>
+                        </div>
+                        <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+                            <!-- Date Filter Shopee Style -->
+                            <div style="display:flex; align-items:center; gap:8px; background:#f3f4f7; padding:8px 12px; border-radius:8px; border:1px solid #eaedf1;">
+                                <span style="font-size:13px;color:#5a6e85;font-weight:600;">Periode:</span>
+                                <input type="date" id="osFilterDateFrom" style="width:130px; font-size:13px; padding:6px 12px; border:none; border-radius:6px; background:#e6e9ee; color:#2c3e50; font-weight:500; outline:none; font-family:inherit; cursor:pointer; transition: 0.2s;" onfocus="this.style.background='#fff';this.style.boxShadow='0 0 0 2px rgba(44,62,80,0.1)'" onblur="this.style.background='#e6e9ee';this.style.boxShadow='none'">
+                                <span style="font-size:13px;color:#5a6e85;">-</span>
+                                <input type="date" id="osFilterDateTo" style="width:130px; font-size:13px; padding:6px 12px; border:none; border-radius:6px; background:#e6e9ee; color:#2c3e50; font-weight:500; outline:none; font-family:inherit; cursor:pointer; transition: 0.2s;" onfocus="this.style.background='#fff';this.style.boxShadow='0 0 0 2px rgba(44,62,80,0.1)'" onblur="this.style.background='#e6e9ee';this.style.boxShadow='none'">
+                                <button onclick="OrderShipping.renderHistory()" style="padding:6px 16px; font-size:13px; font-weight:600; background:#e6e9ee; color:#2c3e50; border:none; border-radius:6px; cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='#d5d9e2'" onmouseout="this.style.background='#e6e9ee'">Filter</button>
+                            </div>
+                            <button class="btn-filter" id="osBtnDeleteSelected" onclick="OrderShipping.deleteSelectedOrders()" style="color:var(--red); border-color:var(--red); display:none;">🗑️ Hapus Terpilih</button>
+                            <button class="btn-add-task" id="btnShowOsImport">📥 Import Data Excel</button>
+                        </div>
+                    </div>
+                    <div id="osHistoryResults" style="margin-top: 4px;"></div>
+                </div>
+
+                <!-- 3. Import View -->
+                <div id="osImportView" class="hidden">
+                    <div style="margin-bottom:16px;">
+                        <button class="btn-modal-cancel" id="btnHideOsImport" style="background:#fff; border:1px solid #ddd; padding:6px 14px; border-radius:6px; cursor:pointer;">← Kembali ke Riwayat Toko</button>
+                    </div>
+
+                    <input type="file" id="orderShippingFileInput" accept=".xlsx,.xls,.csv" multiple style="position:absolute;width:1px;height:1px;opacity:0;">
+                    <div id="osFileList" class="hidden" style="margin-top:8px;"></div>
+                    <div id="orderShippingDropZone" class="hidden"></div>
+                    <div id="orderShippingResults" class="hidden" style="margin-top: 4px;"></div>
+                </div>
+            </div>
+        </main>
+
+        <!-- ===== PAGE: INCOME DATA ===== -->
+        <main class="page" id="pageIncomeData">
+            <div class="page-content">
+                
+                <!-- 1. Shop Selection View -->
+                <div id="incShopSelectionView">
+                    <div style="margin-bottom: 20px;">
+                        <h2 style="font-size:24px; font-weight:700;">🏪 Penghasilan</h2>
+                        <p class="form-hint" style="margin-top:4px;">Pilih toko untuk melihat histori pencairan penghasilannya.</p>
+                    </div>
+                    <div id="incShopList"></div>
+                </div>
+
+                <!-- 2. History View -->
+                <div id="incHistoryView" class="hidden">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 16px; flex-wrap:wrap; gap:12px;">
+                        <div>
+                            <button onclick="IncomeManager.backToShopSelection()" class="btn-modal-cancel" style="padding:6px 12px;font-size:12px;margin-bottom:12px;background:#fff;border:1px solid rgba(0,0,0,0.1);cursor:pointer;">← Kembali ke List Toko</button>
+                            <h2 style="font-size:22px; font-weight:700;" id="incHistoryTitle">Data Penghasilan</h2>
+                        </div>
+                        <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+                            <!-- Date Filter Shopee Style -->
+                            <div style="display:flex; align-items:center; gap:8px; background:#f3f4f7; padding:8px 12px; border-radius:8px; border:1px solid #eaedf1;">
+                                <span style="font-size:13px;color:#5a6e85;font-weight:600;">Periode:</span>
+                                <input type="date" id="incFilterDateFrom" style="width:130px; font-size:13px; padding:6px 12px; border:none; border-radius:6px; background:#e6e9ee; color:#2c3e50; font-weight:500; outline:none; font-family:inherit; cursor:pointer; transition: 0.2s;" onfocus="this.style.background='#fff';this.style.boxShadow='0 0 0 2px rgba(44,62,80,0.1)'" onblur="this.style.background='#e6e9ee';this.style.boxShadow='none'">
+                                <span style="font-size:13px;color:#5a6e85;">-</span>
+                                <input type="date" id="incFilterDateTo" style="width:130px; font-size:13px; padding:6px 12px; border:none; border-radius:6px; background:#e6e9ee; color:#2c3e50; font-weight:500; outline:none; font-family:inherit; cursor:pointer; transition: 0.2s;" onfocus="this.style.background='#fff';this.style.boxShadow='0 0 0 2px rgba(44,62,80,0.1)'" onblur="this.style.background='#e6e9ee';this.style.boxShadow='none'">
+                                <button onclick="IncomeManager.renderHistory()" style="padding:6px 16px; font-size:13px; font-weight:600; background:#e6e9ee; color:#2c3e50; border:none; border-radius:6px; cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='#d5d9e2'" onmouseout="this.style.background='#e6e9ee'">Filter</button>
+                            </div>
+                            <button class="btn-filter" id="incBtnDeleteSelected" onclick="IncomeManager.deleteSelectedIncomes()" style="color:var(--red); border-color:var(--red); display:none;">🗑️ Hapus Terpilih</button>
+                            <button class="btn-add-task" id="btnShowIncImport">📥 Import Laporan Penghasilan</button>
+                        </div>
+                    </div>
+                    <div class="card table-card">
+                        <div class="table-wrapper">
+                            <table class="order-table">
+                                <thead id="incHistoryTableHead">
+                                    <tr>
+                                        <th style="width:40px;text-align:center;"><input type="checkbox" id="incSelectAll" title="Pilih Semua" onchange="IncomeManager.toggleSelectAll(this)"></th>
+                                        <th>Tanggal Order</th>
+                                        <th>No Pesanan</th>
+                                        <th>Nama Pembeli</th>
+                                        <th>Harga Asli</th>
+                                        <th>Biaya Admin</th>
+                                        <th>Biaya Komisi AMS</th>
+                                        <th>Biaya Layanan</th>
+                                        <th>Biaya Proses Pesanan</th>
+                                        <th>Hemat Biaya Kirim</th>
+                                        <th>Total Penghasilan</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="incHistoryTableBody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Import View -->
+                <div id="incImportView" class="hidden">
+                    <div style="margin-bottom:16px;">
+                        <button class="btn-modal-cancel" id="btnHideIncImport" style="background:#fff; border:1px solid #ddd; padding:6px 14px; border-radius:6px; cursor:pointer;">← Kembali ke Riwayat Toko</button>
+                    </div>
+                    
+                    <input type="file" id="incomeFileInput" accept=".xlsx,.xls,.csv" multiple style="position:absolute;width:1px;height:1px;opacity:0;">
+                    <div id="incFileList" class="hidden" style="margin-top:8px;"></div>
+                    <div id="incomeDropZone" class="hidden"></div>
+                    <div id="incResults" class="hidden" style="margin-top: 4px;"></div>
+                </div>
+            </div>
+        </main>
+        <!-- ===== PAGE: TASK TRACKER ===== -->
+        <main class="page" id="pageTasks">
+            <div class="page-content">
+                <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 20px; flex-wrap:wrap; gap:12px;">
+                    <div>
+                        <h2 style="font-size:24px; font-weight:700;">✅ Rutinitas Mingguan</h2>
+                        <p class="form-hint" style="margin-top:4px;" id="dtCurrentDate">Minggu ini, ...</p>
+                    </div>
+                    <div style="display:flex; gap:12px;">
+                        <button class="btn-add-task" id="dtBtnTemplate" onclick="DailyTasks.openTemplateModal()" style="padding:8px 16px;border-radius:8px;font-weight:600;cursor:pointer;background:var(--accent);color:#fff;border:none;">+ Tambah Tugas</button>
+                    </div>
+                </div>
+
+                <!-- 7-Column Kanban Grid -->
+                <h3 style="font-size:18px; font-weight:700; margin-bottom:12px;">📅 Papan Rutinitas Mingguan</h3>
+                <div style="display:flex; gap:16px; overflow-x:auto; padding-bottom:16px; padding-top:4px; scroll-snap-type: x proximity;" id="dtWeeklyGrid">
+                    <!-- Javascript will inject 7 columns here -->
+                </div>
+
+                <!-- Ad-hoc / One-Off Tasks -->
+                <div class="card" style="margin-top:16px; margin-bottom:32px; border-top:4px solid var(--text-primary);">
+                    <div class="card-header" style="border-bottom:1px solid var(--border-color); padding-bottom:12px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+                        <h3 style="font-size:16px; font-weight:700; display:flex; align-items:center; gap:8px;">📌 To-Do List (Tugas Bebas)</h3>
+                        <button onclick="DailyTasks.openCategoryModal()" style="background:none; border:1px solid var(--border-color); padding:4px 8px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer;" title="Atur Kategori">⚙️ Kelola</button>
+                    </div>
+                    <div class="card-body">
+                        <!-- Modern Inline Add Task Form -->
+                        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; background:#f8fafc; padding:12px; border-radius:12px; border:1px solid var(--border-color);">
+                            <input type="text" id="dtInlineAddInput" class="form-input" style="flex:1; min-width:200px; border:none; box-shadow:0 2px 4px rgba(0,0,0,0.02);" placeholder="Ketik tugas insidental di sini...">
+                            <select id="dtInlineAddCategory" class="form-select" style="width:160px; border:none; box-shadow:0 2px 4px rgba(0,0,0,0.02);">
+                                <option value="toko">🛒 Operasional Toko</option>
+                                <option value="affiliate">🎥 Konten Affiliate</option>
+                                <option value="lainnya">📦 Lainnya</option>
+                            </select>
+                            <button onclick="DailyTasks.saveInlineOneOffTask()" class="btn-add-task" style="padding:10px 20px; box-shadow:0 4px 12px rgba(99,102,241,0.2);">+ Tambahkan</button>
+                        </div>
+                        
+                        <div id="dtListOneOff" style="display:flex; flex-direction:row; gap:16px; overflow-x:auto; padding-bottom:16px; scroll-snap-type: x proximity;">
+                            <!-- Checkbox items for one-off tasks -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calendar Streak & Progress -->
+                <div class="card" style="margin-bottom:32px;">
+                    <div class="card-header" style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color); padding-bottom:12px; margin-bottom:16px;">
+                        <h2 style="font-size:16px;">🔥 Kedisiplinan & Progress Hari Ini</h2>
+                        <div class="calendar-nav">
+                            <button class="cal-nav-btn" onclick="DailyTasks.prevMonth()">‹</button>
+                            <span class="cal-month-label" id="dtMonthLabel">...</span>
+                            <button class="cal-nav-btn" onclick="DailyTasks.nextMonth()">›</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Progress Bar inserted into the calendar card -->
+                        <div style="display:flex; align-items:center; gap:16px; margin-bottom:24px; background:#f8fafc; padding:16px; border-radius:12px;">
+                            <div style="flex:1;">
+                                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                                    <span style="font-weight:600; font-size:14px; color:var(--text-secondary);">Progress Rutinitas</span>
+                                    <span id="dtProgressText" style="font-weight:700; color:var(--accent);">0%</span>
+                                </div>
+                                <div style="width:100%; background:#e2e8f0; border-radius:8px; height:12px; overflow:hidden;">
+                                    <div id="dtProgressBar" style="width:0%; background:var(--accent-gradient); height:100%; border-radius:8px; transition:width 0.4s cubic-bezier(0.4,0,0.2,1);"></div>
+                                </div>
+                            </div>
+                            <div id="dtConfetti" style="font-size:28px; opacity:0; transition:all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform:scale(0.5);">🎉</div>
+                        </div>
+
+                        <!-- The calendar grid -->
+                        <div class="calendar-grid" id="dtCalendarGrid">
+                            <div class="cal-header-cell">Sen</div>
+                            <div class="cal-header-cell">Sel</div>
+                            <div class="cal-header-cell">Rab</div>
+                            <div class="cal-header-cell">Kam</div>
+                            <div class="cal-header-cell">Jum</div>
+                            <div class="cal-header-cell">Sab</div>
+                            <div class="cal-header-cell">Min</div>
+                        </div>
+                        <div class="calendar-days" id="dtCalendarDays"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Modal Manajer Kategori -->
+        <div id="dtCategoryModal" class="modal-overlay hidden" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.6);z-index:9999;align-items:center;justify-content:center;padding:16px;">
+            <div class="modal-content" style="background:var(--bg-card);border-radius:16px;width:100%;max-width:400px;box-shadow:0 10px 25px rgba(0,0,0,0.2);">
+                <div class="modal-header" style="padding:20px;border-bottom:1px solid var(--border-color);display:flex;justify-content:space-between;align-items:center;">
+                    <h2 style="font-size:18px;font-weight:700;display:flex;align-items:center;gap:8px;">⚙️ Kelola Kategori</h2>
+                    <button onclick="DailyTasks.closeCategoryModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--text-muted);">&times;</button>
+                </div>
+                <div class="modal-body" style="padding:20px; display:flex; flex-direction:column; gap:16px;">
+                    <div id="dtCategoryList" style="display:flex; flex-direction:column; gap:8px; max-height:200px; overflow-y:auto;">
+                        <!-- Kategori di-render di sini -->
+                    </div>
+                    <div style="display:flex; gap:8px; margin-top:12px; padding-top:16px; border-top:1px dashed var(--border-color);">
+                        <input type="text" id="dtNewCategoryInput" class="form-input" style="flex:1; padding:10px; border-radius:8px;" placeholder="Cth: 🍔 Kuliner">
+                        <button onclick="DailyTasks.addCategory()" style="padding:0 20px; border-radius:8px; font-weight:600; background:var(--accent); color:#fff; border:none; cursor:pointer;">+</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Simple Add Routine -->
+        <div id="dtTemplateModal" class="modal-overlay hidden" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.6);z-index:9999;align-items:center;justify-content:center;padding:16px;">
+            <div class="modal-content" style="background:var(--bg-card);border-radius:16px;width:100%;max-width:400px;box-shadow:0 10px 25px rgba(0,0,0,0.2);">
+                <div class="modal-header" style="padding:20px;border-bottom:1px solid var(--border-color);display:flex;justify-content:space-between;align-items:center;">
+                    <h2 style="font-size:18px;font-weight:700;display:flex;align-items:center;gap:8px;">✨ Tambah Tugas Rutin</h2>
+                    <button onclick="DailyTasks.closeTemplateModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--text-muted);">&times;</button>
+                </div>
+                <div class="modal-body" style="padding:20px; display:flex; flex-direction:column; gap:16px;">
+                    <div class="form-group">
+                        <label style="font-size:13px;font-weight:600;margin-bottom:6px;display:block;">Nama Tugas</label>
+                        <input type="text" id="dtSimpleInput" class="form-input" style="padding:10px;font-size:14px;border-radius:8px;" placeholder="Ketik tugas rutin...">
+                    </div>
+                    <div class="form-group">
+                        <label style="font-size:13px;font-weight:600;margin-bottom:6px;display:block;">Dikerjakan Setiap Hari Apa?</label>
+                        <select id="dtSimpleDay" class="form-select" style="padding:10px;font-size:14px;border-radius:8px;">
+                            <option value="Semua">Tiap Hari</option>
+                            <option value="Senin">Senin</option>
+                            <option value="Selasa">Selasa</option>
+                            <option value="Rabu">Rabu</option>
+                            <option value="Kamis">Kamis</option>
+                            <option value="Jumat">Jumat</option>
+                            <option value="Sabtu">Sabtu</option>
+                            <option value="Minggu">Minggu</option>
+                        </select>
+                    </div>
+
+                </div>
+                <div class="modal-footer" style="padding:20px;border-top:1px solid var(--border-color);display:flex;justify-content:flex-end;gap:12px;">
+                    <button class="btn-modal-cancel" onclick="DailyTasks.closeTemplateModal()" style="padding:8px 16px;border-radius:8px;font-weight:600;background:none;border:1px solid var(--border-color);cursor:pointer;">Batal</button>
+                    <button class="btn-modal-save" onclick="DailyTasks.addSimpleTemplate()" style="padding:8px 16px;border-radius:8px;font-weight:600;background:var(--accent);color:#fff;border:none;cursor:pointer;">Tambah Tugas</button>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ===== PAGE: KOMISI AFFILIATE ===== -->
+        <main class="page" id="pageAffiliate">
+            <div class="page-content">
+                
+                <!-- 1. Account Selection View -->
+                <div id="affAccountSelectionView">
+                    <div style="margin-bottom: 20px;">
+                        <h2 style="font-size:24px; font-weight:700;" id="affAccountTitle">🤝 Komisi Affiliate</h2>
+                        <p class="form-hint" style="margin-top:4px;">Pilih akun untuk melihat dan mengelola data komisi affiliate.</p>
+                    </div>
+                    <div style="margin-bottom: 16px;">
+                        <button class="btn-add-task" onclick="AffiliateCommission.addAccount()">+ Tambah Akun</button>
+                    </div>
+                    <div id="affAccountList" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;"></div>
+                </div>
+
+                <!-- 2. Dashboard View -->
+                <div id="affDashboardView" class="hidden">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 20px; flex-wrap:wrap; gap:12px;">
+                        <div>
+                            <button onclick="AffiliateCommission.backToAccounts()" class="btn-modal-cancel" style="padding:6px 12px;font-size:12px;margin-bottom:12px;background:#fff;border:1px solid rgba(0,0,0,0.1);cursor:pointer;">← Kembali ke List Akun</button>
+                            <h2 id="affiliatePageTitle" style="font-size:24px; font-weight:700;">🤝 Komisi Affiliate</h2>
+                        <p class="form-hint" style="margin-top:4px;">Kelola dan pantau pemasukan dari komisi affiliate.</p>
+                    </div>
+                    <div style="display:flex; gap:12px;">
+                        <button class="btn-filter" id="affBtnImport" style="background:#fff;border:1px solid var(--border-color);padding:8px 16px;border-radius:8px;font-weight:600;cursor:pointer;">📥 Import Excel</button>
+                        <button class="btn-add-task" onclick="AffiliateCommission.openManualForm()">+ Catat Manual</button>
+                    </div>
+                </div>
+
+                <!-- Hidden Input & Dropzone -->
+                <input type="file" id="affFileInput" accept=".xlsx,.xls,.csv" style="display:none;">
+                <div id="affDropZone" class="drop-zone hidden" style="border:2px dashed var(--border-color);border-radius:12px;padding:32px;text-align:center;margin-bottom:20px;cursor:pointer;">
+                    <div style="font-size:32px;margin-bottom:12px;">📁</div>
+                    <div style="font-weight:600;color:var(--text-primary);margin-bottom:4px;">Klik atau Tarik File Excel ke Sini</div>
+                    <div style="font-size:12px;color:var(--text-muted);">Mendukung format laporan komisi Shopee & TikTok</div>
+                </div>
+
+                <!-- Dashboard Summary -->
+                <div class="card" style="margin-bottom:24px; padding: 32px 20px; text-align:center; background: linear-gradient(145deg, var(--bg-card) 0%, rgba(99,102,241,0.03) 100%); border:1px solid var(--border-color);">
+                    <div style="display:flex; justify-content:center; align-items:center; gap: 8px; margin-bottom: 24px; flex-wrap:wrap;">
+                        <span style="font-size:13px; font-weight:600; color:var(--text-muted);">Rentang Waktu:</span>
+                        <select id="affDateRangeFilter" class="form-select" style="max-width:200px; padding:6px 32px 6px 12px; font-size:13px;" onchange="AffiliateCommission.handleDateRangeChange()">
+                            <option value="all">Semua Waktu</option>
+                            <option value="today">Hari Ini</option>
+                            <option value="yesterday">Kemarin</option>
+                            <option value="7days">7 Hari Terakhir</option>
+                            <option value="thismonth">Bulan Ini</option>
+                            <option value="custom">Pilih Tanggal...</option>
+                        </select>
+                        <div id="affCustomDateWrapper" style="display:none; gap:8px; align-items:center;">
+                            <input type="date" id="affDateFrom" class="form-input" style="padding:6px; font-size:13px; max-width:140px;" onchange="AffiliateCommission.render()">
+                            <span style="font-weight:600; color:var(--text-muted);">s/d</span>
+                            <input type="date" id="affDateTo" class="form-input" style="padding:6px; font-size:13px; max-width:140px;" onchange="AffiliateCommission.render()">
+                        </div>
+                    </div>
+                    
+                    <div style="font-size:12px; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:12px;" id="affDashMetricLabel">TOTAL KOMISI KESELURUHAN</div>
+                    <div id="affDashTotal" style="font-size:48px; font-weight:800; color:var(--accent); font-family:var(--font-heading); line-height:1; text-shadow: 0 4px 12px rgba(99,102,241,0.15);">Rp 0</div>
+                </div>
+
+                <!-- Chart -->
+                <div class="card" style="margin-bottom:24px;">
+                    <div class="card-header"><h2>📊 Tren Komisi (6 Bulan Terakhir)</h2></div>
+                    <div class="card-body" id="affChartContainer">
+                        <!-- Chart CSS dinamis -->
+                    </div>
+                </div>
+
+                <!-- Table Riwayat -->
+                <div class="card table-card">
+                    <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+                        <h2>📋 Riwayat Komisi</h2>
+                        <div style="display:flex;gap:8px;">
+                            <select id="affFilterPlatform" class="form-select" style="font-size:12px;padding:6px;border-radius:6px;" onchange="AffiliateCommission.render()">
+                                <option value="all">Semua Platform</option>
+                                <option value="shopee">Shopee</option>
+                                <option value="tiktok">TikTok</option>
+                            </select>
+                            <select id="affFilterStatus" class="form-select" style="font-size:12px;padding:6px;border-radius:6px;" onchange="AffiliateCommission.render()">
+                                <option value="all">Semua Status</option>
+                                <option value="selesai">Selesai</option>
+                                <option value="pending">Pending</option>
+                                <option value="batal">Batal</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="order-table">
+                            <thead id="affTableHeader">
+                                <!-- JS akan menentukan headernya (Shopee: simpel, Tiktok: lengkap) -->
+                            </thead>
+                            <tbody id="affTableBody">
+                                <!-- Data rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Modal Form Manual -->
+                <div id="affModal" class="modal-overlay hidden" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.6);z-index:9999;align-items:center;justify-content:center;padding:16px;">
+                    <div class="modal-content" style="background:var(--bg-card);border-radius:16px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;box-shadow:0 10px 25px rgba(0,0,0,0.1);">
+                        <div class="modal-header" style="padding:20px;border-bottom:1px solid var(--border-color);display:flex;justify-content:space-between;align-items:center;">
+                            <h2 style="font-size:18px;font-weight:700;">📝 Catat Komisi Manual</h2>
+                            <button onclick="AffiliateCommission.closeManualForm()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--text-muted);">&times;</button>
+                        </div>
+                        <div class="modal-body" style="padding:20px;display:flex;flex-direction:column;gap:16px;">
+                            <input type="hidden" id="affFormId">
+                            <div class="form-group">
+                                <label>Tanggal</label>
+                                <input type="date" id="affFormTanggal" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label>Platform</label>
+                                <select id="affFormPlatform" class="form-select">
+                                    <option value="shopee">Shopee</option>
+                                    <option value="tiktok">TikTok</option>
+                                    <option value="lainnya">Lainnya</option>
+                                </select>
+                            </div>
+                            <div class="form-group aff-detail-group">
+                                <label>No. Pesanan (Opsional)</label>
+                                <input type="text" id="affFormNoPesanan" class="form-input" placeholder="Masukkan nomor pesanan">
+                            </div>
+                            <div class="form-group aff-detail-group">
+                                <label>Nama Produk (Opsional)</label>
+                                <input type="text" id="affFormProduk" class="form-input" placeholder="Produk yang dibeli">
+                            </div>
+                            <div class="form-group">
+                                <label>Nominal Komisi (Rp)</label>
+                                <input type="number" id="affFormKomisi" class="form-input" placeholder="0" min="0">
+                            </div>
+                            <div class="form-group aff-detail-group">
+                                <label>Status</label>
+                                <select id="affFormStatus" class="form-select">
+                                    <option value="Selesai">Selesai / Dibayar</option>
+                                    <option value="Pending">Pending / Proses</option>
+                                    <option value="Batal">Batal / Ditolak</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer" style="padding:20px;border-top:1px solid var(--border-color);display:flex;justify-content:flex-end;gap:12px;">
+                            <button class="btn-modal-cancel" onclick="AffiliateCommission.closeManualForm()">Batal</button>
+                            <button class="btn-modal-save" onclick="AffiliateCommission.saveForm()">Simpan</button>
+                        </div>
+                    </div>
+                </div>
+                </div> <!-- End of Dashboard View -->
+            </div>
+        </main>
+
+        <!-- ===== PAGE: ROAS ===== -->
+        <main class="page" id="pageRoas">
+            <div class="page-content">
+                
+                <!-- 1. Shop Selection View -->
+                <div id="roasShopSelectionView">
+                    <div style="margin-bottom: 20px;">
+                        <h2 style="font-size:24px; font-weight:700;">📈 Performa Iklan</h2>
+                        <p class="form-hint" style="margin-top:4px;">Pilih toko untuk melihat performa dan data iklannya secara spesifik.</p>
+                    </div>
+                    <div id="roasShopList"></div>
+                </div>
+
+                <!-- 2. Dashboard View -->
+                <div id="roasHistoryView" class="hidden">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 16px; flex-wrap:wrap; gap:12px;">
+                        <div>
+                            <button onclick="RoasCalculator.backToShopSelection()" class="btn-modal-cancel" style="padding:6px 12px;font-size:12px;margin-bottom:12px;background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border-color);cursor:pointer;">← Kembali ke List Toko</button>
+                            <h2 style="font-size:22px; font-weight:700;" id="roasHistoryTitle">Performa Iklan</h2>
+                        </div>
+                    </div>
+
+                    <div class="roas-controls">
+                        <div class="roas-filter-row">
+                            <div class="roas-date-filter">
+                                <label>Dari</label>
+                                <input type="date" id="roasFilterFrom" class="form-input filter-input">
+                            </div>
+                            <div class="roas-date-filter">
+                                <label>Sampai</label>
+                                <input type="date" id="roasFilterTo" class="form-input filter-input">
+                            </div>
+                            <input type="file" id="roasAdsFileInput" accept=".xlsx,.xls,.csv" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;pointer-events:none;">
+                            <button class="btn-filter" id="btnDeleteAllRoas" style="color:var(--red); border-color:var(--red);" onclick="RoasCalculator.deleteAllAds()">🗑️ Hapus Semua</button>
+                            <button class="btn-filter" id="btnImportAds">📥 Import Ads Report</button>
+                            <button class="btn-add-task" id="btnAddRoas">+ Tambah Data Iklan</button>
+                        </div>
+                    </div>
+                    <div id="roasContent"></div>
+                </div>
+            </div>
+        </main>
+
+        <!-- ===== PAGE: COMPETITORS ===== -->
+        <main class="page" id="pageCompetitors">
+            <div class="page-content">
+                <div class="competitor-controls">
+                    <div class="comp-tabs">
+                        <button class="comp-tab-btn active" data-tab="manual">📋 Manual</button>
+                        <button class="comp-tab-btn" data-tab="scrape">🔍 Scrape Shopee</button>
+                        <button class="comp-tab-btn" data-tab="import">📊 Import Seller Center</button>
+                    </div>
+                    <button class="btn-add-task" id="btnAddCompetitor">+ Tambah Kompetitor</button>
+                </div>
+                <div id="compManualView"><div id="compManualContent"></div></div>
+                <div id="compScrapeView" class="hidden"><div id="compScrapeContent"></div></div>
+                <div id="compImportView" class="hidden"><div id="compImportContent"></div></div>
+            </div>
+        </main>
+
+        <!-- ===== PAGE: TARGET PROFIT ===== -->
+        <main class="page" id="pageTargetProfit">
+            <div class="page-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 style="display:flex;align-items:center;gap:10px;">
+                            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent);"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+                            Target Profit Bulanan
+                        </h2>
+                        <p style="color:var(--text-muted);font-size:14px;margin-top:4px;">Atur target profit bulanan untuk masing-masing toko. Ini akan muncul sebagai progress bar di Dashboard.</p>
+                    </div>
+                    <div class="card-body">
+                        <div id="targetProfitContainer" style="display:flex;flex-direction:column;gap:16px;">
+                            <!-- Injected by target-profit.js -->
+                        </div>
+                        <button id="btnSaveTargetProfit" class="btn-primary" style="margin-top:24px;padding:12px 24px;">Simpan Target</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Task Modal -->
+    <div class="modal-overlay hidden" id="taskModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Task Baru</h3>
+                <button class="modal-close" id="modalClose">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="taskTitle">Judul Task</label>
+                    <input type="text" id="taskTitle" class="form-input" placeholder="Contoh: Packing orderan batch 12">
+                </div>
+                <div class="form-group">
+                    <label for="taskDesc">Deskripsi</label>
+                    <textarea id="taskDesc" class="form-input form-textarea" rows="3" placeholder="Detail pekerjaan..."></textarea>
+                </div>
+                <div class="modal-row">
+                    <div class="form-group">
+                        <label for="taskDeadline">Deadline</label>
+                        <input type="datetime-local" id="taskDeadline" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="taskPriority">Prioritas</label>
+                        <select id="taskPriority" class="form-select">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                            <option value="urgent">Urgent</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-row">
+                    <div class="form-group">
+                        <label for="taskLabel">Kategori / Label</label>
+                        <select id="taskLabel" class="form-select">
+                            <option value="produksi">🏭 Produksi</option>
+                            <option value="pengiriman">📦 Pengiriman</option>
+                            <option value="marketing">📣 Marketing</option>
+                            <option value="admin">📝 Admin</option>
+                            <option value="keuangan">💰 Keuangan</option>
+                            <option value="lainnya">🔖 Lainnya</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskAssignee">Assign ke</label>
+                        <select id="taskAssignee" class="form-select">
+                            <option value="">— Pilih —</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="taskStatus">Status</label>
+                    <select id="taskStatus" class="form-select">
+                        <option value="todo">To Do</option>
+                        <option value="inprogress">In Progress</option>
+                        <option value="done">Done</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal-cancel" id="modalCancel">Batal</button>
+                <button class="btn-modal-save" id="modalSave">Simpan</button>
+                <button class="btn-modal-delete hidden" id="modalDelete">Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Member Modal -->
+    <div class="modal-overlay hidden" id="memberModal">
+        <div class="modal modal-sm">
+            <div class="modal-header">
+                <h3>Tambah Anggota Tim</h3>
+                <button class="modal-close" id="memberModalClose">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="memberName">Nama Anggota</label>
+                    <input type="text" id="memberName" class="form-input" placeholder="Nama...">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal-cancel" id="memberModalCancel">Batal</button>
+                <button class="btn-modal-save" id="memberModalSave">Tambah</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div class="modal-overlay hidden" id="productModalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="productModalTitle">Produk Baru</h3>
+                <button class="modal-close" id="productModalClose">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="productName">Nama Produk</label>
+                    <input type="text" id="productName" class="form-input" placeholder="Contoh: Kaos Polos Hitam">
+                </div>
+                <div class="form-group">
+                    <label for="productJenis">Jenis Produk</label>
+                    <select id="productJenis" class="form-select">
+                        <option value="fashion">👕 Fashion</option>
+                        <option value="elektronik">📱 Elektronik</option>
+                        <option value="makanan">🍜 Makanan & Minuman</option>
+                        <option value="kecantikan">💄 Kecantikan</option>
+                        <option value="rumah">🏠 Rumah Tangga</option>
+                        <option value="kesehatan">💊 Kesehatan</option>
+                        <option value="olahraga">⚽ Olahraga</option>
+                        <option value="otomotif">🚗 Otomotif</option>
+                        <option value="lainnya">📦 Lainnya</option>
+                    </select>
+                </div>
+                <div class="product-variations-section">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <label style="margin:0;">Variasi Produk</label>
+                        <button class="btn-save-single" id="btnAddVariation" style="padding:2px 8px;">+ Tambah Variasi</button>
+                    </div>
+                    <div id="productVariationsList" style="display:flex; flex-direction:column; gap:10px; max-height:300px; overflow-y:auto; padding-right:5px;">
+                        <!-- Variations injected here -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal-delete hidden" id="productDeleteBtn">Hapus</button>
+                <button class="btn-modal-cancel" id="productCancelBtn">Batal</button>
+                <button class="btn-modal-save" id="productSaveBtn">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Toast container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ROAS Modal -->
+    <div class="modal-overlay hidden" id="roasModalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="roasModalTitle">Tambah Data Iklan</h3>
+                <button class="modal-close" id="roasModalClose">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-row">
+                    <div class="form-group">
+                        <label for="roasProduct">Nama Produk / Campaign</label>
+                        <input type="text" id="roasProduct" class="form-input" placeholder="Nama produk yang diiklankan">
+                    </div>
+                    <div class="form-group">
+                        <label for="roasTanggal">Tanggal</label>
+                        <input type="date" id="roasTanggal" class="form-input">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="roasCampaign">Nama Campaign (opsional)</label>
+                    <input type="text" id="roasCampaign" class="form-input" placeholder="Keyword Ads - Produk X">
+                </div>
+                <div class="modal-row">
+                    <div class="form-group">
+                        <label for="roasAdSpend">💰 Ad Spend (Rp)</label>
+                        <input type="text" id="roasAdSpend" class="form-input" placeholder="500,000" inputmode="numeric">
+                    </div>
+                    <div class="form-group">
+                        <label for="roasRevenue">💵 Revenue/GMV (Rp)</label>
+                        <input type="text" id="roasRevenue" class="form-input" placeholder="2,000,000" inputmode="numeric">
+                    </div>
+                </div>
+                <div class="modal-row">
+                    <div class="form-group">
+                        <label for="roasModal">📦 Harga Modal (Rp)</label>
+                        <input type="text" id="roasModal" class="form-input" placeholder="800,000" inputmode="numeric">
+                    </div>
+                    <div class="form-group">
+                        <label for="roasBiayaAdmin">Biaya Admin (Rp)</label>
+                        <input type="text" id="roasBiayaAdmin" class="form-input" placeholder="0" inputmode="numeric">
+                    </div>
+                </div>
+                <div class="modal-row">
+                    <div class="form-group">
+                        <label for="roasBiayaLayanan">Biaya Layanan (Rp)</label>
+                        <input type="text" id="roasBiayaLayanan" class="form-input" placeholder="0" inputmode="numeric">
+                    </div>
+                    <div class="form-group">
+                        <label for="roasBiayaLain">Biaya Lain (Rp)</label>
+                        <input type="text" id="roasBiayaLain" class="form-input" placeholder="0" inputmode="numeric">
+                    </div>
+                </div>
+                <div class="modal-row">
+                    <div class="form-group">
+                        <label for="roasImpressions">Impressions</label>
+                        <input type="number" id="roasImpressions" class="form-input" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="roasClicks">Clicks</label>
+                        <input type="number" id="roasClicks" class="form-input" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="roasOrders">Orders</label>
+                        <input type="number" id="roasOrders" class="form-input" placeholder="0">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal-delete hidden" id="roasDeleteBtn">Hapus</button>
+                <button class="btn-modal-cancel" id="roasCancelBtn">Batal</button>
+                <button class="btn-modal-save" id="roasSaveBtn">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Competitor Modal -->
+    <div class="modal-overlay hidden" id="competitorModalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="competitorModalTitle">Tambah Kompetitor</h3>
+                <button class="modal-close" id="competitorModalClose">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-row">
+                    <div class="form-group">
+                        <label for="competitorNamaToko">Nama Toko</label>
+                        <input type="text" id="competitorNamaToko" class="form-input" placeholder="Nama toko kompetitor">
+                    </div>
+                    <div class="form-group">
+                        <label for="competitorProduk">Nama Produk</label>
+                        <input type="text" id="competitorProduk" class="form-input" placeholder="Produk yang dipantau">
+                    </div>
+                </div>
+                <div class="modal-row">
+                    <div class="form-group">
+                        <label for="competitorHarga">Harga Jual (Rp)</label>
+                        <input type="text" id="competitorHarga" class="form-input" placeholder="150,000" inputmode="numeric">
+                    </div>
+                    <div class="form-group">
+                        <label for="competitorPosisiIklan">Posisi Iklan</label>
+                        <input type="text" id="competitorPosisiIklan" class="form-input" placeholder="Halaman 1, Posisi 3">
+                    </div>
+                </div>
+                <div class="modal-row">
+                    <div class="form-group">
+                        <label for="competitorKataKunci">Kata Kunci (pisah koma)</label>
+                        <input type="text" id="competitorKataKunci" class="form-input" placeholder="mp3 player, speaker mini">
+                    </div>
+                    <div class="form-group">
+                        <label for="competitorEstPenjualan">Est. Penjualan/bln</label>
+                        <input type="text" id="competitorEstPenjualan" class="form-input" placeholder="500+ terjual">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="competitorCatatan">Catatan Perubahan</label>
+                    <input type="text" id="competitorCatatan" class="form-input" placeholder="Harga turun Rp 10rb, posisi naik">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal-delete hidden" id="competitorDeleteBtn">Hapus</button>
+                <button class="btn-modal-cancel" id="competitorCancelBtn">Batal</button>
+                <button class="btn-modal-save" id="competitorSaveBtn">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="localforage.min.js"></script>
+    <script>
+    // Global utilities — must load before any module
+    function showToast(message, type = 'info') {
+        const container = document.getElementById('toastContainer');
+        if (!container) return;
+        const toast = document.createElement('div');
+        toast.className = 'toast ' + type;
+        toast.textContent = message;
+        container.appendChild(toast);
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateX(40px)';
+            toast.style.transition = 'all 0.3s ease';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    // ---- Auto Top Scrollbar for .table-wrapper ----
+    function attachTopScrollbar(wrapper) {
+        if (wrapper.dataset.topScroll) return; // already attached
+        wrapper.dataset.topScroll = '1';
+
+        const proxy = document.createElement('div');
+        proxy.className = 'table-top-scroll';
+        const inner = document.createElement('div');
+        inner.className = 'table-top-scroll-inner';
+        proxy.appendChild(inner);
+        wrapper.parentNode.insertBefore(proxy, wrapper);
+
+        let syncing = false;
+
+        function updateWidth() {
+            inner.style.width = wrapper.scrollWidth + 'px';
+        }
+
+        proxy.addEventListener('scroll', () => {
+            if (syncing) return;
+            syncing = true;
+            wrapper.scrollLeft = proxy.scrollLeft;
+            syncing = false;
+        });
+
+        wrapper.addEventListener('scroll', () => {
+            if (syncing) return;
+            syncing = true;
+            proxy.scrollLeft = wrapper.scrollLeft;
+            syncing = false;
+        });
+
+        // Update width when content changes
+        updateWidth();
+        const ro = new ResizeObserver(() => updateWidth());
+        ro.observe(wrapper);
+
+        // Also update after a short delay (for dynamically rendered tables)
+        setTimeout(updateWidth, 500);
+        setTimeout(updateWidth, 2000);
+    }
+
+    // Observe DOM for new .table-wrapper elements
+    const twObserver = new MutationObserver(() => {
+        document.querySelectorAll('.table-wrapper').forEach(attachTopScrollbar);
+    });
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.table-wrapper').forEach(attachTopScrollbar);
+        twObserver.observe(document.body, { childList: true, subtree: true });
+    });
+    </script>
+    
+    <!-- Backup / Restore Modal & Script -->
+    <div id="syncManagerModal" class="modal-overlay hidden" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.6);z-index:9999;align-items:center;justify-content:center;padding:16px;">
+        <div class="modal-content" style="background:var(--bg-card);border-radius:16px;width:100%;max-width:450px;box-shadow:0 10px 25px rgba(0,0,0,0.2);">
+            <div class="modal-header" style="padding:20px;border-bottom:1px solid var(--border-color);display:flex;justify-content:space-between;align-items:center;">
+                <h2 style="font-size:18px;font-weight:700;display:flex;align-items:center;gap:8px;">🛡️ Data Backup & Restore</h2>
+                <button onclick="closeSyncModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--text-muted);">&times;</button>
+            </div>
+            <div class="modal-body" style="padding:20px; display:flex; flex-direction:column; gap:20px;">
+                <div style="background:#f8fafc; padding:16px; border-radius:12px; border:1px solid var(--border-color);">
+                    <h3 style="font-size:14px; font-weight:700; margin-bottom:8px; display:flex; align-items:center; gap:8px;">📤 Ekspor Data (Backup)</h3>
+                    <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px;">Unduh seluruh memori catatan BizManager ke dalam satu file .json aman yang bisa disimpan di Flashdisk Anda.</p>
+                    <button onclick="triggerExport()" style="padding:10px 16px; background:var(--accent); color:#fff; border:none; border-radius:8px; font-weight:600; cursor:pointer; width:100%;">Ekspor ke File .json</button>
+                </div>
+                
+                <div style="background:#fff1f2; padding:16px; border-radius:12px; border:1px dashed #fecdd3;">
+                    <h3 style="font-size:14px; font-weight:700; color:#9f1239; margin-bottom:8px; display:flex; align-items:center; gap:8px;">📥 Impor Data (Restore)</h3>
+                    <p style="font-size:13px; color:#be123c; margin-bottom:12px;">Peringatan: Jika Anda melakukan impor, maka <b>SELURUH DATA LAMA</b> di layar ini akan tertimpa / dihapus bersih.</p>
+                    <input type="file" id="importFileInput" accept=".json" style="display:none;" onchange="handleFileImport(event)">
+                    <button onclick="document.getElementById('importFileInput').click()" style="padding:10px 16px; background:#e11d48; color:#fff; border:none; border-radius:8px; font-weight:600; cursor:pointer; width:100%;">Pilih & Mulai Impor .json</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    function openSyncModal() {
+        const c = document.getElementById('syncManagerModal');
+        if (c) { c.classList.remove('hidden'); c.style.display = 'flex'; }
+    }
+    function closeSyncModal() {
+        const c = document.getElementById('syncManagerModal');
+        if (c) { c.classList.add('hidden'); c.style.display = 'none'; }
+    }
+    async function triggerExport() {
+        if (typeof StorageManager === 'undefined') return alert('Sistem StorageManager belum dimuat sepenuhnya.');
+        try {
+            const dataStr = await StorageManager.exportDatabase();
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `BizManager_Terminal_FullBackup_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } catch (e) {
+            alert('Gagal mengekspor data: ' + e);
+        }
+    }
+    async function handleFileImport(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = async function(ev) {
+            let confirmed = true;
+            if (typeof AppModal !== 'undefined') {
+                confirmed = await AppModal.confirm('PERINGATAN: Semua data Anda yang saat ini ada di tampilan PC akan DIHAPUS BESIH dan diganti 100% oleh file backup ini. Lanjutkan?', 'Kunci Keputusan', 'danger');
+            } else {
+                confirmed = confirm('Semua data PC saat ini akan ditimpa. Lanjut?');
+            }
+            if (!confirmed) {
+                e.target.value = '';
+                return;
+            }
+            
+            const content = ev.target.result;
+            const success = await StorageManager.importDatabase(content);
+            if (success) {
+                if(typeof AppModal !== 'undefined') {
+                    await AppModal.alert('RESTORE BERHASIL! Halaman akan otomatis dimuat ulang.', 'Sukses', 'success');
+                } else alert('Berhasil!');
+                location.reload();
+            } else {
+                if(typeof AppModal !== 'undefined') {
+                    AppModal.alert('GAGAL ME-RESTORE! Mungkin bentuk file JSON-nya korup / salah pilih file.', 'Error', 'danger');
+                } else alert('Gagal memuat!');
+            }
+        };
+        reader.readAsText(file);
+    }
+    </script>
+    
+    <!-- App Scripts -->
+    <script src="storage.js"></script>
+    <script src="config.js"></script>
+    <script src="validators.js"></script>
+    <script src="app-modal.js"></script>
+    <script src="shop-manager.js"></script>
+    <script src="alias-manager.js"></script>
+    <script src="profit-calculator.js"></script>
+    <script src="product-list.js"></script>
+    <script src="roas-calculator.js"></script>
+    <script src="competitor-tracker.js"></script>
+
+    <script src="order-shipping.js"></script>
+    <script src="task-tracker.js"></script>
+    <script src="target-profit.js"></script>
+    <script src="income-manager.js"></script>
+    <script src="affiliate-commission.js"></script>
+    <script src="business-summary.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

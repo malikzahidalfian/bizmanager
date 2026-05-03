@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+    <pre id="output">Loading...</pre>
+    <script>
+        async function readExcel(filename) {
+            const res = await fetch('/' + filename);
+            const arrayBuffer = await res.arrayBuffer();
+            return XLSX.read(arrayBuffer, { type: 'array' });
+        }
+
+        async function main() {
+            try {
+                let out = '';
+                const wb1 = await readExcel('mass_update_sales_info_216133656_20260326160222.xlsx');
+                out += '=== MASS UPDATE ===\n';
+                const sheet1 = wb1.Sheets[wb1.SheetNames[0]];
+                const data1 = XLSX.utils.sheet_to_json(sheet1, { header: 1, defval: '' });
+                for(let i=0; i<4; i++) out += JSON.stringify(data1[i]) + '\n';
+
+                const wb2 = await readExcel('Income.sudah dilepas.id.20251225_20260325.xlsx');
+                out += '\n=== INCOME REPORT ===\n';
+                out += 'Sheets: ' + wb2.SheetNames.join(', ') + '\n';
+                
+                let pSheet = wb2.Sheets[wb2.SheetNames[3]]; // default
+                for (let i = 0; i < wb2.SheetNames.length; i++) {
+                    const name = wb2.SheetNames[i].toLowerCase();
+                    if (name.includes('order processing') || name.includes('biaya proses')) {
+                        pSheet = wb2.Sheets[wb2.SheetNames[i]];
+                        break;
+                    }
+                }
+                const data2 = XLSX.utils.sheet_to_json(pSheet, { header: 1, defval: '' });
+                out += 'Sheet ' + pSheet + ' Rows 0-10:\n';
+                for(let i=0; i<10; i++) out += JSON.stringify(data2[i]) + '\n';
+
+                document.getElementById('output').textContent = out;
+            } catch(e) {
+                document.getElementById('output').textContent = 'Error: ' + e.stack;
+            }
+            window.done = true;
+        }
+        main();
+    </script>
+</body>
+</html>
